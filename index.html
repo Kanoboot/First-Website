@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welkom — ORP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Logo / Header -->
+  <div class="logo-wrap">
+    <div class="format-badge">🔒 Beveiligd portaal</div>
+    <div class="logo-text">ORP</div>
+    <div class="header-sub">Oranjestad Roleplay · Members Portal</div>
+  </div>
+
+  <!-- Info blok -->
+  <div class="card">
+    <div class="card-title">Welkom terug</div>
+    <div class="card-subtitle">Alleen voor geautoriseerde leden</div>
+    <p>
+      Dit is het interne portaal van <strong style="color: var(--accent2)">Content Creators Oranjestad Roleplay</strong>.
+      Hier vind je exclusieve analyses van een hoop zaken van onze content creators. Deze analyses zijn beschikbaar voor iedereen met toegang, maar ook de informatie moet binnen diezelfde groep van mensen blijven.
+      Vul hieronder het wachtwoord in om toegang te krijgen.
+    </p>
+  </div>
+
+  <!-- Wachtwoord blok -->
+  <div class="lock-card">
+    <div>
+      <div class="input-label">Wachtwoord</div>
+      <div class="input-wrap">
+        <input type="password" id="passwordInput" placeholder="Voer wachtwoord in..." />
+        <button class="btn" onclick="checkPassword()">Inloggen</button>
+      </div>
+    </div>
+    <div class="error-msg" id="errorMsg">⚠ Incorrect wachtwoord. Probeer opnieuw.</div>
+  </div>
+
+  <!-- <div class="footer">© ORP · Media Team</div> -->
+   <div class="footer">© Aertssen Media</div>
+
+</div>
+
+<script src="js/login.js"></script>
+</body>
+</html>

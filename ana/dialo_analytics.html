@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<!--
+=============================================================
+  YOUTUBE ANALYSE TEMPLATE — Yassin
+  
+  HOE TE GEBRUIKEN:
+  Stuur dit bestand + je nieuwe CSV/JSON naar Claude met de prompt:
+  
+  "Analyseer deze dataset en vul de template in met de juiste data."
+  
+  Claude vervangt alle [[PLACEHOLDERS]] met de echte cijfers
+  en past de hooks, top 10 en grafieken automatisch aan.
+=============================================================
+-->
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Analyse — [[KANAAL_NAAM]]</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131c;
+    --surface2: #1c1c2a;
+    --accent: #ff4d00;
+    --accent2: #ffaa00;
+    --accent3: #00cfff;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --border: #2a2a3d;
+    --good: #00e5a0;
+    --bad: #ff4d67;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 2rem;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 10% 0%, rgba(255,77,0,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 90% 100%, rgba(0,207,255,0.06) 0%, transparent 60%);
+  }
+
+  header {
+    display: flex;
+    align-items: flex-end;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    justify-content: space-between;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.55rem 1.1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: border-color 0.2s, color 0.2s;
+    align-self: flex-start;
+    margin-top: 0.25rem;
+  }
+
+  .btn-back:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, #ff4d00, #ffaa00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .format-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255,77,0,0.12);
+    border: 1px solid rgba(255,77,0,0.35);
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+
+  .header-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding-bottom: 0.5rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .stat-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
+  .stat-delta { font-size: 0.75rem; color: var(--good); margin-top: 0.4rem; font-weight: 600; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+  }
+
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+
+  .card-subtitle { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.5rem; font-family: 'Space Mono', monospace; }
+
+  .hook-list { display: flex; flex-direction: column; gap: 0.9rem; }
+  .hook-row { display: flex; flex-direction: column; gap: 0.35rem; }
+  .hook-meta { display: flex; justify-content: space-between; align-items: baseline; }
+  .hook-name { font-size: 0.85rem; font-weight: 600; }
+  .hook-views { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent2); }
+  .bar-track { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .hook-count { font-size: 0.65rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+  .video-list { display: flex; flex-direction: column; gap: 0; }
+  .video-row {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr 5rem 4rem 4rem;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .video-row:hover { background: rgba(255,255,255,0.02); border-radius: 6px; }
+  .video-rank { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--muted); }
+  .video-rank.top3 { color: var(--accent2); }
+  .video-title { font-size: 0.8rem; line-height: 1.4; color: var(--text); }
+  .video-views { font-family: 'Space Mono', monospace; font-size: 0.78rem; color: var(--accent); text-align: right; }
+  .video-likes { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--good); text-align: right; }
+  .video-comments { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent3); text-align: right; }
+  .table-header {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr 5rem 4rem 4rem;
+    gap: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--accent);
+    margin-bottom: 0.25rem;
+  }
+  .th { font-family: 'Space Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); text-align: right; }
+  .th:nth-child(2) { text-align: left; }
+
+  .dur-chart { display: flex; align-items: flex-end; gap: 0.75rem; height: 140px; padding-top: 1rem; }
+  .dur-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; height: 100%; justify-content: flex-end; }
+  .dur-bar { width: 100%; border-radius: 6px 6px 0 0; display: flex; align-items: flex-start; justify-content: center; }
+  .dur-label { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--muted); text-align: center; }
+  .dur-val { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--text); padding-top: 0.3rem; }
+
+  .hbar-list { display: flex; flex-direction: column; gap: 1rem; }
+  .hbar-row { display: flex; align-items: center; gap: 1rem; }
+  .hbar-label { font-size: 0.8rem; width: 90px; flex-shrink: 0; color: var(--text); }
+  .hbar-wrap { flex: 1; }
+  .hbar-val { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--accent2); width: 55px; text-align: right; flex-shrink: 0; }
+
+  .insights { display: flex; flex-direction: column; gap: 1rem; }
+  .insight { background: var(--surface2); border-radius: 8px; padding: 1rem 1.25rem; border-left: 3px solid var(--accent); font-size: 0.83rem; line-height: 1.6; }
+  .insight.green { border-left-color: var(--good); }
+  .insight.blue { border-left-color: var(--accent3); }
+  .insight.yellow { border-left-color: var(--accent2); }
+  .insight.red { border-left-color: var(--bad); }
+  .insight strong { color: var(--accent2); }
+  .insight.green strong { color: var(--good); }
+  .insight.blue strong { color: var(--accent3); }
+  .insight.red strong { color: var(--bad); }
+
+  .verdict-box {
+    background: linear-gradient(135deg, rgba(255,77,0,0.1), rgba(255,170,0,0.05));
+    border: 1px solid rgba(255,77,0,0.3);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+  }
+  .verdict-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--accent); margin-bottom: 1rem; letter-spacing: 0.05em; }
+  .verdict-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .verdict-item { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.82rem; line-height: 1.5; }
+  .verdict-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="format-badge">[[FORMAT_BADGE]]</div><!-- bijv. "▶ YouTube Shorts" of "▶ Long-form video's" -->
+    <div class="logo-text">[[DASHBOARD_TITEL]]</div><!-- bijv. "Shorts Analyse" of "Video Analyse" -->
+    <div class="header-sub">Kanaal: [[KANAAL_NAAM]] · [[TOTAAL_VIDEOS]] video's · [[CONTENT_TYPE]] · Gegenereerd [[DATUM]]</div>
+  </div>
+  <a class="btn-back" href="../dashboard.html">← Ga terug</a>
+</header>
+
+<!-- KPI CARDS -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Totaal video's</div>
+    <div class="stat-value">[[TOTAAL_VIDEOS]]</div>
+    <div class="stat-sub">[[FORMAT_LABEL]]</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Gemiddelde views</div>
+    <div class="stat-value">[[GEM_VIEWS]]</div>
+    <div class="stat-sub">Mediaan: [[MEDIAAN_VIEWS]]</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Best scorende video</div>
+    <div class="stat-value">[[MAX_VIEWS]]</div>
+    <div class="stat-sub">[[MAX_VIEWS_TITEL]]</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Gem. likes per video</div>
+    <div class="stat-value">[[GEM_LIKES]]</div>
+    <div class="stat-sub">Kanaal: [[SUBSCRIBERS]] subs</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- HOOK ANALYSE — Claude vult hookData[] in met echte cijfers -->
+  <div class="card">
+    <div class="card-title">Hook-type analyse</div>
+    <div class="card-subtitle">Gemiddelde views per titel-strategie</div>
+    <div class="hook-list" id="hookList"></div>
+  </div>
+
+  <!-- TOP 10 — Claude vult top10[] in met echte titels en cijfers -->
+  <div class="card">
+    <div class="card-title">Top 10 video's</div>
+    <div class="card-subtitle">Gerangschikt op views</div>
+    <div class="table-header">
+      <div class="th">#</div>
+      <div class="th">Titel</div>
+      <div class="th">Views</div>
+      <div class="th">Likes</div>
+      <div class="th">Comments</div>
+    </div>
+    <div class="video-list" id="videoList"></div>
+  </div>
+</div>
+
+<div class="grid-3">
+  <!-- DUUR GRAFIEK — Claude vult durationData[] in -->
+  <div class="card">
+    <div class="card-title">Videoduur vs Views</div>
+    <div class="card-subtitle">Gem. views per lengte-categorie</div>
+    <div class="dur-chart" id="durChart"></div>
+  </div>
+
+  <!-- EXTRA METRIC — Claude kiest relevante metric (bijv. emoji's, hashtags, etc.) -->
+  <div class="card">
+    <div class="card-title">[[EXTRA_METRIC_TITEL]]</div><!-- bijv. "Emoji's in titel" of "Hashtags in titel" -->
+    <div class="card-subtitle">[[EXTRA_METRIC_SUBTITEL]]</div>
+    <div class="hbar-list" id="extraChart"></div>
+  </div>
+
+  <!-- INZICHTEN — Claude schrijft 4 relevante inzichten -->
+  <div class="card">
+    <div class="card-title">Key Inzichten</div>
+    <div class="card-subtitle">Wat werkt (en wat niet)</div>
+    <div class="insights" id="insightsList">
+      <!-- Claude vult in, gebruik klassen: green / blue / yellow / red -->
+      <!-- Voorbeeld:
+      <div class="insight green">
+        <strong>✅ Titel van inzicht.</strong> Uitleg met <strong>getal views</strong> erin.
+      </div>
+      -->
+    </div>
+  </div>
+</div>
+
+<!-- AANBEVELINGEN — Claude schrijft 6 concrete aanbevelingen -->
+<div class="verdict-box">
+  <div class="verdict-title">🎯 Aanbevelingen voor betere performance</div>
+  <div class="verdict-grid" id="verdictGrid">
+    <!-- Claude vult in. Voorbeeld:
+    <div class="verdict-item">
+      <div class="verdict-icon">⚔️</div>
+      <div>Gebruik <strong>conflict-framing</strong>: "tegen", "vs", "fight" trekt meer klikken.</div>
+    </div>
+    -->
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  CLAUDE VERVANGT DEZE ARRAYS MET ECHTE DATA UIT DE DATASET
+// ============================================================
+
+const hookData = [
+  // { hook: 'Naam van hook', count: X, avg_views: XXXX, color: '#hexkleur' },
+  // Sorteer van hoog naar laag op avg_views
+  // Gebruik onderscheidende kleuren per hook
+  // [[CLAUDE_VULT_HOOKS_IN]]
+];
+
+const top10 = [
+  // { title: 'Videotitel (max 52 tekens)', views: XXXX, likes: XX, comments: XX },
+  // [[CLAUDE_VULT_TOP10_IN]]
+];
+
+const durationData = [
+  // { bucket: 'label', count: X, avg_views: XXXX },
+  // Kies buckets passend bij het format (Shorts: seconden, Long-form: minuten)
+  // [[CLAUDE_VULT_DUUR_IN]]
+];
+
+const extraData = [
+  // { label: 'label', avg_views: XXXX, count: X },
+  // [[CLAUDE_VULT_EXTRA_METRIC_IN]]
+];
+
+// ============================================================
+//  RENDERING — NIET AANPASSEN
+// ============================================================
+
+const durColors = ['#FF6B35', '#ffaa00', '#00e5a0', '#00cfff', '#a78bfa'];
+const extraColors = ['#f87171', '#60a5fa', '#ffaa00', '#00e5a0'];
+
+// Hooks
+const maxViews = Math.max(...hookData.map(h => h.avg_views));
+const hookList = document.getElementById('hookList');
+hookData.forEach(h => {
+  const pct = (h.avg_views / maxViews * 100).toFixed(1);
+  hookList.innerHTML += `
+    <div class="hook-row">
+      <div class="hook-meta">
+        <span class="hook-name">${h.hook}</span>
+        <span class="hook-views">${h.avg_views.toLocaleString('nl-NL')} views</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%; background: linear-gradient(90deg, ${h.color}88, ${h.color});"></div>
+      </div>
+      <div class="hook-count">${h.count} video's</div>
+    </div>`;
+});
+
+// Top 10
+const videoList = document.getElementById('videoList');
+top10.forEach((v, i) => {
+  const title = v.title.length > 52 ? v.title.slice(0,52)+'…' : v.title;
+  videoList.innerHTML += `
+    <div class="video-row">
+      <div class="video-rank ${i < 3 ? 'top3' : ''}">${i+1}</div>
+      <div class="video-title">${title}</div>
+      <div class="video-views">${v.views.toLocaleString('nl-NL')}</div>
+      <div class="video-likes">${v.likes}</div>
+      <div class="video-comments">${v.comments}</div>
+    </div>`;
+});
+
+// Duration
+const maxDur = Math.max(...durationData.map(d => d.avg_views));
+const durChart = document.getElementById('durChart');
+durationData.forEach((d, i) => {
+  const h = Math.round((d.avg_views / maxDur) * 110);
+  durChart.innerHTML += `
+    <div class="dur-bar-wrap">
+      <div class="dur-val">${(d.avg_views/1000).toFixed(1)}k</div>
+      <div class="dur-bar" style="height:${h}px; background: linear-gradient(180deg, ${durColors[i]}cc, ${durColors[i]}33);"></div>
+      <div class="dur-label">${d.bucket}<br><span style="opacity:0.6">${d.count}×</span></div>
+    </div>`;
+});
+
+// Extra metric
+const maxExtra = Math.max(...extraData.map(e => e.avg_views));
+const extraChart = document.getElementById('extraChart');
+extraData.forEach((e, i) => {
+  const pct = (e.avg_views / maxExtra * 100).toFixed(1);
+  extraChart.innerHTML += `
+    <div class="hbar-row">
+      <div class="hbar-label">${e.label}</div>
+      <div class="hbar-wrap">
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%; background: ${extraColors[i] || '#ffaa00'};"></div>
+        </div>
+      </div>
+      <div class="hbar-val">${e.avg_views.toLocaleString('nl-NL')}</div>
+    </div>`;
+});
+</script>
+</body>
+</html>

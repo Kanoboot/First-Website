@@ -257,15 +257,25 @@
     <div class="logo-text">[[DASHBOARD_TITEL]]</div><!-- bijv. "Shorts Analyse" of "Video Analyse" -->
     <div class="header-sub">Kanaal: [[KANAAL_NAAM]] · [[TOTAAL_VIDEOS]] video's · [[CONTENT_TYPE]] · Gegenereerd [[DATUM]]</div>
   </div>
-  <a class="btn-back" href="../dashboard.html">← Ga terug</a>
+  <a class="btn-back" href="../dashboards/dashboard_tube.html">← Ga terug</a>
 </header>
 
 <!-- KPI CARDS -->
-<div class="stats-grid">
+<div class="stats-grid" style="grid-template-columns: repeat(6, 1fr);">
   <div class="stat-card">
     <div class="stat-label">Totaal video's</div>
     <div class="stat-value">[[TOTAAL_VIDEOS]]</div>
     <div class="stat-sub">[[FORMAT_LABEL]]</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Totaal views</div>
+    <div class="stat-value">[[TOTAAL_VIEWS]]</div><!-- bijv. "161.6K" of "2.3M" -->
+    <div class="stat-sub">[[PERIODE_LABEL]]</div><!-- bijv. "23 feb – 8 mrt 2026" -->
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Subscribers</div>
+    <div class="stat-value">[[SUBSCRIBERS]]</div><!-- bijv. "184K" -->
+    <div class="stat-sub">Op moment van analyse</div>
   </div>
   <div class="stat-card">
     <div class="stat-label">Gemiddelde views</div>

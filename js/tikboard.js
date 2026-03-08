@@ -18,18 +18,18 @@ if (sessionStorage.getItem('orpAccess') !== 'true') {
 const creators = [
   {
     name: "Dialo",
-    image: "images/dialo.jpg",
-    page: "ana/dialo_analytics.html"
+    image: "../images/dialo.jpg",
+    page: "../tiktok/dialo_analytics.html"
   },
   {
     name: "Yassin",
-    image: "images/yassin.jpeg",
-    page: "ana/yassin_analytics.html"
+    image: "../images/yassin.jpeg",
+    page: "../tiktok/yassin_analytics.html"
   },
   {
     name: "Tonigain",
-    iamge: "images/tonigain.jpg",
-    page: "ana/tonigain_analytics.html"
+    iamge: "../images/tonigain.jpg",
+    page: "../tiktok/tonigain_analytics.html"
   },
 
   // ── Voeg hier extra creators toe ──

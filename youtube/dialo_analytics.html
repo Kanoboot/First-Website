@@ -1,9 +1,22 @@
 <!DOCTYPE html>
+<!--
+=============================================================
+  YOUTUBE ANALYSE TEMPLATE — Yassin
+  
+  HOE TE GEBRUIKEN:
+  Stuur dit bestand + je nieuwe CSV/JSON naar Claude met de prompt:
+  
+  "Analyseer deze dataset en vul de template in met de juiste data."
+  
+  Claude vervangt alle [[PLACEHOLDERS]] met de echte cijfers
+  en past de hooks, top 10 en grafieken automatisch aan.
+=============================================================
+-->
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YouTube Analyse — ToniGain · 23 feb – 8 mrt 2026</title>
+<title>YouTube Analyse — [[KANAAL_NAAM]]</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -208,9 +221,9 @@
 
   .hbar-list { display: flex; flex-direction: column; gap: 1rem; }
   .hbar-row { display: flex; align-items: center; gap: 1rem; }
-  .hbar-label { font-size: 0.8rem; width: 110px; flex-shrink: 0; color: var(--text); }
+  .hbar-label { font-size: 0.8rem; width: 90px; flex-shrink: 0; color: var(--text); }
   .hbar-wrap { flex: 1; }
-  .hbar-val { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
+  .hbar-val { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--accent2); width: 55px; text-align: right; flex-shrink: 0; }
 
   .insights { display: flex; flex-direction: column; gap: 1rem; }
   .insight { background: var(--surface2); border-radius: 8px; padding: 1rem 1.25rem; border-left: 3px solid var(--accent); font-size: 0.83rem; line-height: 1.6; }
@@ -240,185 +253,147 @@
 
 <header>
   <div>
-    <div class="format-badge">▶ YouTube Shorts</div>
-    <div class="logo-text">Shorts Analyse</div>
-    <div class="header-sub">Kanaal: ToniGain · 25 video's · Shorts (6s – 1m33s) · Periode: 23 feb – 8 mrt 2026</div>
+    <div class="format-badge">[[FORMAT_BADGE]]</div><!-- bijv. "▶ YouTube Shorts" of "▶ Long-form video's" -->
+    <div class="logo-text">[[DASHBOARD_TITEL]]</div><!-- bijv. "Shorts Analyse" of "Video Analyse" -->
+    <div class="header-sub">Kanaal: [[KANAAL_NAAM]] · [[TOTAAL_VIDEOS]] video's · [[CONTENT_TYPE]] · Gegenereerd [[DATUM]]</div>
   </div>
-  <a class="btn-back" href="../dashboard.html">← Ga terug</a>
+  <a class="btn-back" href="../dashboards/dashboard_tube.html">← Ga terug</a>
 </header>
 
 <!-- KPI CARDS -->
 <div class="stats-grid" style="grid-template-columns: repeat(6, 1fr);">
   <div class="stat-card">
     <div class="stat-label">Totaal video's</div>
-    <div class="stat-value">25</div>
-    <div class="stat-sub">YouTube Shorts · 14 dagen</div>
+    <div class="stat-value">[[TOTAAL_VIDEOS]]</div>
+    <div class="stat-sub">[[FORMAT_LABEL]]</div>
   </div>
   <div class="stat-card">
     <div class="stat-label">Totaal views</div>
-    <div class="stat-value">161.6K</div>
-    <div class="stat-sub">23 feb – 8 mrt 2026</div>
+    <div class="stat-value">[[TOTAAL_VIEWS]]</div><!-- bijv. "161.6K" of "2.3M" -->
+    <div class="stat-sub">[[PERIODE_LABEL]]</div><!-- bijv. "23 feb – 8 mrt 2026" -->
   </div>
   <div class="stat-card">
     <div class="stat-label">Subscribers</div>
-    <div class="stat-value">184K</div>
+    <div class="stat-value">[[SUBSCRIBERS]]</div><!-- bijv. "184K" -->
     <div class="stat-sub">Op moment van analyse</div>
   </div>
   <div class="stat-card">
     <div class="stat-label">Gemiddelde views</div>
-    <div class="stat-value">6.465</div>
-    <div class="stat-sub">Mediaan: 6.141 views</div>
+    <div class="stat-value">[[GEM_VIEWS]]</div>
+    <div class="stat-sub">Mediaan: [[MEDIAAN_VIEWS]]</div>
   </div>
   <div class="stat-card">
     <div class="stat-label">Best scorende video</div>
-    <div class="stat-value">24.629</div>
-    <div class="stat-sub">LIKE = CRASHEN! 🥱</div>
+    <div class="stat-value">[[MAX_VIEWS]]</div>
+    <div class="stat-sub">[[MAX_VIEWS_TITEL]]</div>
   </div>
   <div class="stat-card">
     <div class="stat-label">Gem. likes per video</div>
-    <div class="stat-value">140</div>
-    <div class="stat-sub">Kanaal: 184.000 subs</div>
+    <div class="stat-value">[[GEM_LIKES]]</div>
+    <div class="stat-sub">Kanaal: [[SUBSCRIBERS]] subs</div>
   </div>
 </div>
 
 <div class="grid-2">
-  <!-- HOOK ANALYSE -->
+  <!-- HOOK ANALYSE — Claude vult hookData[] in met echte cijfers -->
   <div class="card">
     <div class="card-title">Hook-type analyse</div>
     <div class="card-subtitle">Gemiddelde views per titel-strategie</div>
     <div class="hook-list" id="hookList"></div>
   </div>
 
-  <!-- TOP 10 -->
+  <!-- TOP 10 — Claude vult top10[] in met echte titels en cijfers -->
   <div class="card">
     <div class="card-title">Top 10 video's</div>
-    <div class="card-subtitle">Gerangschikt op views — periode 23 feb t/m 8 mrt 2026</div>
+    <div class="card-subtitle">Gerangschikt op views</div>
     <div class="table-header">
       <div class="th">#</div>
       <div class="th">Titel</div>
       <div class="th">Views</div>
       <div class="th">Likes</div>
-      <div class="th">Comm.</div>
+      <div class="th">Comments</div>
     </div>
     <div class="video-list" id="videoList"></div>
   </div>
 </div>
 
 <div class="grid-3">
-  <!-- DUUR GRAFIEK -->
+  <!-- DUUR GRAFIEK — Claude vult durationData[] in -->
   <div class="card">
     <div class="card-title">Videoduur vs Views</div>
     <div class="card-subtitle">Gem. views per lengte-categorie</div>
     <div class="dur-chart" id="durChart"></div>
   </div>
 
-  <!-- EMOJI ANALYSE -->
+  <!-- EXTRA METRIC — Claude kiest relevante metric (bijv. emoji's, hashtags, etc.) -->
   <div class="card">
-    <div class="card-title">Emoji's in de titel</div>
-    <div class="card-subtitle">Gem. views op basis van emoji-gebruik</div>
+    <div class="card-title">[[EXTRA_METRIC_TITEL]]</div><!-- bijv. "Emoji's in titel" of "Hashtags in titel" -->
+    <div class="card-subtitle">[[EXTRA_METRIC_SUBTITEL]]</div>
     <div class="hbar-list" id="extraChart"></div>
   </div>
 
-  <!-- INZICHTEN -->
+  <!-- INZICHTEN — Claude schrijft 4 relevante inzichten -->
   <div class="card">
     <div class="card-title">Key Inzichten</div>
     <div class="card-subtitle">Wat werkt (en wat niet)</div>
     <div class="insights" id="insightsList">
+      <!-- Claude vult in, gebruik klassen: green / blue / yellow / red -->
+      <!-- Voorbeeld:
       <div class="insight green">
-        <strong>✅ Interactieve CTA's winnen.</strong> Video's waarbij kijkers iets "bestuuren" (like = crashen, abonneer = kapot) scoren gemiddeld <strong>10.469 views</strong> — ruim 62% boven het kanaalgemiddelde. Dit format triggert actie én nieuwsgierigheid tegelijk.
+        <strong>✅ Titel van inzicht.</strong> Uitleg met <strong>getal views</strong> erin.
       </div>
-      <div class="insight blue">
-        <strong>⚡ Korte video's (< 10s) performen sterk.</strong> De 9 video's onder de 10 seconden halen gemiddeld <strong>8.362 views</strong>. Minder tijd = minder drop-off = meer rewatches. Houdt het kort en puntig.
-      </div>
-      <div class="insight yellow">
-        <strong>🎯 Emoji's verhogen je bereik licht.</strong> Video's mét emoji in de titel halen gem. <strong>6.756 views</strong> vs. 4.937 zonder emoji (+37%). Emojis vallen op in de feed en zetten toon voor de video.
-      </div>
-      <div class="insight red">
-        <strong>⚠️ Conflict-titels vallen tegen.</strong> Titels met "boos", "ruzie" of "irritatie" scoren gemiddeld slechts <strong>3.536 views</strong> — het laagst van alle hook-types. Overweeg conflict te framen als verrassing i.p.v. aankondiging.
-      </div>
+      -->
     </div>
   </div>
 </div>
 
-<!-- AANBEVELINGEN -->
+<!-- AANBEVELINGEN — Claude schrijft 6 concrete aanbevelingen -->
 <div class="verdict-box">
   <div class="verdict-title">🎯 Aanbevelingen voor betere performance</div>
   <div class="verdict-grid" id="verdictGrid">
+    <!-- Claude vult in. Voorbeeld:
     <div class="verdict-item">
-      <div class="verdict-icon">🎮</div>
-      <div>Maak <strong>interactieve CTA-video's een vast format</strong>: "LIKE = X gebeurt" werkt bewezen. Herhaal dit elke 5–7 video's om het algoritme te voeden met hoge engagement.</div>
+      <div class="verdict-icon">⚔️</div>
+      <div>Gebruik <strong>conflict-framing</strong>: "tegen", "vs", "fight" trekt meer klikken.</div>
     </div>
-    <div class="verdict-item">
-      <div class="verdict-icon">⏱️</div>
-      <div>Streef naar <strong>video's onder de 10 seconden</strong> als primair format. Dit zijn je sterkste performers in deze periode. Meer rewatches = meer bereik via het algoritme.</div>
-    </div>
-    <div class="verdict-item">
-      <div class="verdict-icon">❓</div>
-      <div>Gebruik <strong>open vragen of cliffhangers</strong> in de titel i.p.v. directe conflict-beschrijving. "Wat de hellybelly?" scoort beter dan "Irritatie was aanwezig" — mysterie wint van aankondiging.</div>
-    </div>
-    <div class="verdict-item">
-      <div class="verdict-icon">😂</div>
-      <div>Zet <strong>een passende emoji aan het einde van elke titel</strong>. Ga niet zonder — de data laat een consistent verschil zien. Kies emoji's die de emotie versterken (☠️ bij gevaar, 😂 bij humor).</div>
-    </div>
-    <div class="verdict-item">
-      <div class="verdict-icon">📅</div>
-      <div>Post <strong>minimaal 1 video per dag</strong>, maar vermijd lange video's (> 60s). De enige video boven 1 minuut in deze periode scoorde slechts 299 views — 95% onder het gemiddelde.</div>
-    </div>
-    <div class="verdict-item">
-      <div class="verdict-icon">🔁</div>
-      <div>Test <strong>Gevaar/Chaos-titels vaker</strong>: "Ja joh rij maar dood ☠️" en "Ik reed bijna iedereen dood" scoren samen gem. 8.506 views. Dit format heeft onbenut potentieel als het consistent wordt ingezet.</div>
-    </div>
+    -->
   </div>
 </div>
 
 <script>
 // ============================================================
-//  DATA — ToniGain · 23 feb – 8 mrt 2026
+//  CLAUDE VERVANGT DEZE ARRAYS MET ECHTE DATA UIT DE DATASET
 // ============================================================
 
 const hookData = [
-  { hook: 'CTA in titel (LIKE/ABONNEER)', count: 3, avg_views: 10469, color: '#ff4d00' },
-  { hook: 'Gevaar / Chaos-framing',       count: 3, avg_views: 8506,  color: '#ff9500' },
-  { hook: 'Humor / Lachen',               count: 1, avg_views: 6141,  color: '#ffaa00' },
-  { hook: 'Vraag-hook (wat/hoe)',          count: 4, avg_views: 6105,  color: '#00cfff' },
-  { hook: 'Situatie / Verhaaltje',        count: 10, avg_views: 6000, color: '#a78bfa' },
-  { hook: 'Conflict / Emotie (boos/ruzie)', count: 4, avg_views: 3536, color: '#ff4d67' },
+  // { hook: 'Naam van hook', count: X, avg_views: XXXX, color: '#hexkleur' },
+  // Sorteer van hoog naar laag op avg_views
+  // Gebruik onderscheidende kleuren per hook
+  // [[CLAUDE_VULT_HOOKS_IN]]
 ];
 
 const top10 = [
-  { title: 'LIKE = CRASHEN! 🥱',                           views: 24629, likes: 1298, comments: 4 },
-  { title: 'Hallo wat kost hier watermeloen?! 🍉',         views: 12022, likes: 97,   comments: 3 },
-  { title: 'Hij stuurt vol op me in... 🤦🏻‍♂️',              views: 10473, likes: 100,  comments: 3 },
-  { title: 'Ja joh rij maar dood ☠️',                      views: 10051, likes: 152,  comments: 1 },
-  { title: 'Ik dacht echt dat ik gek was 🫨',              views: 9334,  likes: 125,  comments: 2 },
-  { title: 'Dit moet je nooit meer zeggen tegen mij! 🙂',  views: 9028,  likes: 147,  comments: 6 },
-  { title: 'Hoe leef ik nog?!',                            views: 8917,  likes: 92,   comments: 4 },
-  { title: 'Ik reed bijna iedereen dood, oeps...',         views: 7964,  likes: 75,   comments: 1 },
-  { title: 'Haha allebei dezelfde fout gemaakt 😂',        views: 7504,  likes: 67,   comments: 1 },
-  { title: 'Wat de hellybelly 🥹',                         views: 7502,  likes: 79,   comments: 2 },
+  // { title: 'Videotitel (max 52 tekens)', views: XXXX, likes: XX, comments: XX },
+  // [[CLAUDE_VULT_TOP10_IN]]
 ];
 
 const durationData = [
-  { bucket: '< 10s',   count: 9, avg_views: 8362  },
-  { bucket: '10–19s',  count: 8, avg_views: 5457  },
-  { bucket: '20–30s',  count: 4, avg_views: 2753  },
-  { bucket: '31–60s',  count: 3, avg_views: 10469 },
-  { bucket: '> 60s',   count: 1, avg_views: 299   },
+  // { bucket: 'label', count: X, avg_views: XXXX },
+  // Kies buckets passend bij het format (Shorts: seconden, Long-form: minuten)
+  // [[CLAUDE_VULT_DUUR_IN]]
 ];
 
 const extraData = [
-  { label: 'Met emoji 😊',    avg_views: 6756, count: 21 },
-  { label: 'Zonder emoji',    avg_views: 4937, count: 4  },
-  { label: 'Met uitroepteken!', avg_views: 7820, count: 8  },
-  { label: 'Alleen tekst',    avg_views: 5100, count: 5  },
+  // { label: 'label', avg_views: XXXX, count: X },
+  // [[CLAUDE_VULT_EXTRA_METRIC_IN]]
 ];
 
 // ============================================================
-//  RENDERING
+//  RENDERING — NIET AANPASSEN
 // ============================================================
 
-const durColors = ['#FF6B35', '#ffaa00', '#00e5a0', '#00cfff', '#ff4d67'];
-const extraColors = ['#ffaa00', '#6b6b85', '#ff4d00', '#a78bfa'];
+const durColors = ['#FF6B35', '#ffaa00', '#00e5a0', '#00cfff', '#a78bfa'];
+const extraColors = ['#f87171', '#60a5fa', '#ffaa00', '#00e5a0'];
 
 // Hooks
 const maxViews = Math.max(...hookData.map(h => h.avg_views));

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Analyse — ToniGain · 23 feb – 8 mrt 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131c;
+    --surface2: #1c1c2a;
+    --accent: #ff4d00;
+    --accent2: #ffaa00;
+    --accent3: #00cfff;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --border: #2a2a3d;
+    --good: #00e5a0;
+    --bad: #ff4d67;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 2rem;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 10% 0%, rgba(255,77,0,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 90% 100%, rgba(0,207,255,0.06) 0%, transparent 60%);
+  }
+
+  header {
+    display: flex;
+    align-items: flex-end;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    justify-content: space-between;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.55rem 1.1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: border-color 0.2s, color 0.2s;
+    align-self: flex-start;
+    margin-top: 0.25rem;
+  }
+
+  .btn-back:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, #ff4d00, #ffaa00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .format-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255,77,0,0.12);
+    border: 1px solid rgba(255,77,0,0.35);
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+
+  .header-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding-bottom: 0.5rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .stat-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
+  .stat-delta { font-size: 0.75rem; color: var(--good); margin-top: 0.4rem; font-weight: 600; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+  }
+
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+
+  .card-subtitle { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.5rem; font-family: 'Space Mono', monospace; }
+
+  .hook-list { display: flex; flex-direction: column; gap: 0.9rem; }
+  .hook-row { display: flex; flex-direction: column; gap: 0.35rem; }
+  .hook-meta { display: flex; justify-content: space-between; align-items: baseline; }
+  .hook-name { font-size: 0.85rem; font-weight: 600; }
+  .hook-views { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent2); }
+  .bar-track { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .hook-count { font-size: 0.65rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+  .video-list { display: flex; flex-direction: column; gap: 0; }
+  .video-row {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr 5rem 4rem 4rem;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .video-row:hover { background: rgba(255,255,255,0.02); border-radius: 6px; }
+  .video-rank { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--muted); }
+  .video-rank.top3 { color: var(--accent2); }
+  .video-title { font-size: 0.8rem; line-height: 1.4; color: var(--text); }
+  .video-views { font-family: 'Space Mono', monospace; font-size: 0.78rem; color: var(--accent); text-align: right; }
+  .video-likes { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--good); text-align: right; }
+  .video-comments { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent3); text-align: right; }
+  .table-header {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr 5rem 4rem 4rem;
+    gap: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--accent);
+    margin-bottom: 0.25rem;
+  }
+  .th { font-family: 'Space Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); text-align: right; }
+  .th:nth-child(2) { text-align: left; }
+
+  .dur-chart { display: flex; align-items: flex-end; gap: 0.75rem; height: 140px; padding-top: 1rem; }
+  .dur-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; height: 100%; justify-content: flex-end; }
+  .dur-bar { width: 100%; border-radius: 6px 6px 0 0; display: flex; align-items: flex-start; justify-content: center; }
+  .dur-label { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--muted); text-align: center; }
+  .dur-val { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--text); padding-top: 0.3rem; }
+
+  .hbar-list { display: flex; flex-direction: column; gap: 1rem; }
+  .hbar-row { display: flex; align-items: center; gap: 1rem; }
+  .hbar-label { font-size: 0.8rem; width: 110px; flex-shrink: 0; color: var(--text); }
+  .hbar-wrap { flex: 1; }
+  .hbar-val { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
+
+  .insights { display: flex; flex-direction: column; gap: 1rem; }
+  .insight { background: var(--surface2); border-radius: 8px; padding: 1rem 1.25rem; border-left: 3px solid var(--accent); font-size: 0.83rem; line-height: 1.6; }
+  .insight.green { border-left-color: var(--good); }
+  .insight.blue { border-left-color: var(--accent3); }
+  .insight.yellow { border-left-color: var(--accent2); }
+  .insight.red { border-left-color: var(--bad); }
+  .insight strong { color: var(--accent2); }
+  .insight.green strong { color: var(--good); }
+  .insight.blue strong { color: var(--accent3); }
+  .insight.red strong { color: var(--bad); }
+
+  .verdict-box {
+    background: linear-gradient(135deg, rgba(255,77,0,0.1), rgba(255,170,0,0.05));
+    border: 1px solid rgba(255,77,0,0.3);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+  }
+  .verdict-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--accent); margin-bottom: 1rem; letter-spacing: 0.05em; }
+  .verdict-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .verdict-item { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.82rem; line-height: 1.5; }
+  .verdict-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="format-badge">▶ YouTube Shorts</div>
+    <div class="logo-text">Shorts Analyse</div>
+    <div class="header-sub">Kanaal: ToniGain · 25 video's · Shorts (6s – 1m33s) · Periode: 23 feb – 8 mrt 2026</div>
+  </div>
+  <a class="btn-back" href="dashboard.html">← Ga terug</a>
+</header>
+
+<!-- KPI CARDS -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Totaal video's</div>
+    <div class="stat-value">25</div>
+    <div class="stat-sub">YouTube Shorts · 14 dagen</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Gemiddelde views</div>
+    <div class="stat-value">6.465</div>
+    <div class="stat-sub">Mediaan: 6.141 views</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Best scorende video</div>
+    <div class="stat-value">24.629</div>
+    <div class="stat-sub">LIKE = CRASHEN! 🥱</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Gem. likes per video</div>
+    <div class="stat-value">140</div>
+    <div class="stat-sub">Kanaal: 184.000 subs</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- HOOK ANALYSE -->
+  <div class="card">
+    <div class="card-title">Hook-type analyse</div>
+    <div class="card-subtitle">Gemiddelde views per titel-strategie</div>
+    <div class="hook-list" id="hookList"></div>
+  </div>
+
+  <!-- TOP 10 -->
+  <div class="card">
+    <div class="card-title">Top 10 video's</div>
+    <div class="card-subtitle">Gerangschikt op views — periode 23 feb t/m 8 mrt 2026</div>
+    <div class="table-header">
+      <div class="th">#</div>
+      <div class="th">Titel</div>
+      <div class="th">Views</div>
+      <div class="th">Likes</div>
+      <div class="th">Comm.</div>
+    </div>
+    <div class="video-list" id="videoList"></div>
+  </div>
+</div>
+
+<div class="grid-3">
+  <!-- DUUR GRAFIEK -->
+  <div class="card">
+    <div class="card-title">Videoduur vs Views</div>
+    <div class="card-subtitle">Gem. views per lengte-categorie</div>
+    <div class="dur-chart" id="durChart"></div>
+  </div>
+
+  <!-- EMOJI ANALYSE -->
+  <div class="card">
+    <div class="card-title">Emoji's in de titel</div>
+    <div class="card-subtitle">Gem. views op basis van emoji-gebruik</div>
+    <div class="hbar-list" id="extraChart"></div>
+  </div>
+
+  <!-- INZICHTEN -->
+  <div class="card">
+    <div class="card-title">Key Inzichten</div>
+    <div class="card-subtitle">Wat werkt (en wat niet)</div>
+    <div class="insights" id="insightsList">
+      <div class="insight green">
+        <strong>✅ Interactieve CTA's winnen.</strong> Video's waarbij kijkers iets "bestuuren" (like = crashen, abonneer = kapot) scoren gemiddeld <strong>10.469 views</strong> — ruim 62% boven het kanaalgemiddelde. Dit format triggert actie én nieuwsgierigheid tegelijk.
+      </div>
+      <div class="insight blue">
+        <strong>⚡ Korte video's (< 10s) performen sterk.</strong> De 9 video's onder de 10 seconden halen gemiddeld <strong>8.362 views</strong>. Minder tijd = minder drop-off = meer rewatches. Houdt het kort en puntig.
+      </div>
+      <div class="insight yellow">
+        <strong>🎯 Emoji's verhogen je bereik licht.</strong> Video's mét emoji in de titel halen gem. <strong>6.756 views</strong> vs. 4.937 zonder emoji (+37%). Emojis vallen op in de feed en zetten toon voor de video.
+      </div>
+      <div class="insight red">
+        <strong>⚠️ Conflict-titels vallen tegen.</strong> Titels met "boos", "ruzie" of "irritatie" scoren gemiddeld slechts <strong>3.536 views</strong> — het laagst van alle hook-types. Overweeg conflict te framen als verrassing i.p.v. aankondiging.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AANBEVELINGEN -->
+<div class="verdict-box">
+  <div class="verdict-title">🎯 Aanbevelingen voor betere performance</div>
+  <div class="verdict-grid" id="verdictGrid">
+    <div class="verdict-item">
+      <div class="verdict-icon">🎮</div>
+      <div>Maak <strong>interactieve CTA-video's een vast format</strong>: "LIKE = X gebeurt" werkt bewezen. Herhaal dit elke 5–7 video's om het algoritme te voeden met hoge engagement.</div>
+    </div>
+    <div class="verdict-item">
+      <div class="verdict-icon">⏱️</div>
+      <div>Streef naar <strong>video's onder de 10 seconden</strong> als primair format. Dit zijn je sterkste performers in deze periode. Meer rewatches = meer bereik via het algoritme.</div>
+    </div>
+    <div class="verdict-item">
+      <div class="verdict-icon">❓</div>
+      <div>Gebruik <strong>open vragen of cliffhangers</strong> in de titel i.p.v. directe conflict-beschrijving. "Wat de hellybelly?" scoort beter dan "Irritatie was aanwezig" — mysterie wint van aankondiging.</div>
+    </div>
+    <div class="verdict-item">
+      <div class="verdict-icon">😂</div>
+      <div>Zet <strong>een passende emoji aan het einde van elke titel</strong>. Ga niet zonder — de data laat een consistent verschil zien. Kies emoji's die de emotie versterken (☠️ bij gevaar, 😂 bij humor).</div>
+    </div>
+    <div class="verdict-item">
+      <div class="verdict-icon">📅</div>
+      <div>Post <strong>minimaal 1 video per dag</strong>, maar vermijd lange video's (> 60s). De enige video boven 1 minuut in deze periode scoorde slechts 299 views — 95% onder het gemiddelde.</div>
+    </div>
+    <div class="verdict-item">
+      <div class="verdict-icon">🔁</div>
+      <div>Test <strong>Gevaar/Chaos-titels vaker</strong>: "Ja joh rij maar dood ☠️" en "Ik reed bijna iedereen dood" scoren samen gem. 8.506 views. Dit format heeft onbenut potentieel als het consistent wordt ingezet.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  DATA — ToniGain · 23 feb – 8 mrt 2026
+// ============================================================
+
+const hookData = [
+  { hook: 'CTA in titel (LIKE/ABONNEER)', count: 3, avg_views: 10469, color: '#ff4d00' },
+  { hook: 'Gevaar / Chaos-framing',       count: 3, avg_views: 8506,  color: '#ff9500' },
+  { hook: 'Humor / Lachen',               count: 1, avg_views: 6141,  color: '#ffaa00' },
+  { hook: 'Vraag-hook (wat/hoe)',          count: 4, avg_views: 6105,  color: '#00cfff' },
+  { hook: 'Situatie / Verhaaltje',        count: 10, avg_views: 6000, color: '#a78bfa' },
+  { hook: 'Conflict / Emotie (boos/ruzie)', count: 4, avg_views: 3536, color: '#ff4d67' },
+];
+
+const top10 = [
+  { title: 'LIKE = CRASHEN! 🥱',                           views: 24629, likes: 1298, comments: 4 },
+  { title: 'Hallo wat kost hier watermeloen?! 🍉',         views: 12022, likes: 97,   comments: 3 },
+  { title: 'Hij stuurt vol op me in... 🤦🏻‍♂️',              views: 10473, likes: 100,  comments: 3 },
+  { title: 'Ja joh rij maar dood ☠️',                      views: 10051, likes: 152,  comments: 1 },
+  { title: 'Ik dacht echt dat ik gek was 🫨',              views: 9334,  likes: 125,  comments: 2 },
+  { title: 'Dit moet je nooit meer zeggen tegen mij! 🙂',  views: 9028,  likes: 147,  comments: 6 },
+  { title: 'Hoe leef ik nog?!',                            views: 8917,  likes: 92,   comments: 4 },
+  { title: 'Ik reed bijna iedereen dood, oeps...',         views: 7964,  likes: 75,   comments: 1 },
+  { title: 'Haha allebei dezelfde fout gemaakt 😂',        views: 7504,  likes: 67,   comments: 1 },
+  { title: 'Wat de hellybelly 🥹',                         views: 7502,  likes: 79,   comments: 2 },
+];
+
+const durationData = [
+  { bucket: '< 10s',   count: 9, avg_views: 8362  },
+  { bucket: '10–19s',  count: 8, avg_views: 5457  },
+  { bucket: '20–30s',  count: 4, avg_views: 2753  },
+  { bucket: '31–60s',  count: 3, avg_views: 10469 },
+  { bucket: '> 60s',   count: 1, avg_views: 299   },
+];
+
+const extraData = [
+  { label: 'Met emoji 😊',    avg_views: 6756, count: 21 },
+  { label: 'Zonder emoji',    avg_views: 4937, count: 4  },
+  { label: 'Met uitroepteken!', avg_views: 7820, count: 8  },
+  { label: 'Alleen tekst',    avg_views: 5100, count: 5  },
+];
+
+// ============================================================
+//  RENDERING
+// ============================================================
+
+const durColors = ['#FF6B35', '#ffaa00', '#00e5a0', '#00cfff', '#ff4d67'];
+const extraColors = ['#ffaa00', '#6b6b85', '#ff4d00', '#a78bfa'];
+
+// Hooks
+const maxViews = Math.max(...hookData.map(h => h.avg_views));
+const hookList = document.getElementById('hookList');
+hookData.forEach(h => {
+  const pct = (h.avg_views / maxViews * 100).toFixed(1);
+  hookList.innerHTML += `
+    <div class="hook-row">
+      <div class="hook-meta">
+        <span class="hook-name">${h.hook}</span>
+        <span class="hook-views">${h.avg_views.toLocaleString('nl-NL')} views</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%; background: linear-gradient(90deg, ${h.color}88, ${h.color});"></div>
+      </div>
+      <div class="hook-count">${h.count} video's</div>
+    </div>`;
+});
+
+// Top 10
+const videoList = document.getElementById('videoList');
+top10.forEach((v, i) => {
+  const title = v.title.length > 52 ? v.title.slice(0,52)+'…' : v.title;
+  videoList.innerHTML += `
+    <div class="video-row">
+      <div class="video-rank ${i < 3 ? 'top3' : ''}">${i+1}</div>
+      <div class="video-title">${title}</div>
+      <div class="video-views">${v.views.toLocaleString('nl-NL')}</div>
+      <div class="video-likes">${v.likes}</div>
+      <div class="video-comments">${v.comments}</div>
+    </div>`;
+});
+
+// Duration
+const maxDur = Math.max(...durationData.map(d => d.avg_views));
+const durChart = document.getElementById('durChart');
+durationData.forEach((d, i) => {
+  const h = Math.round((d.avg_views / maxDur) * 110);
+  durChart.innerHTML += `
+    <div class="dur-bar-wrap">
+      <div class="dur-val">${(d.avg_views/1000).toFixed(1)}k</div>
+      <div class="dur-bar" style="height:${h}px; background: linear-gradient(180deg, ${durColors[i]}cc, ${durColors[i]}33);"></div>
+      <div class="dur-label">${d.bucket}<br><span style="opacity:0.6">${d.count}×</span></div>
+    </div>`;
+});
+
+// Extra metric
+const maxExtra = Math.max(...extraData.map(e => e.avg_views));
+const extraChart = document.getElementById('extraChart');
+extraData.forEach((e, i) => {
+  const pct = (e.avg_views / maxExtra * 100).toFixed(1);
+  extraChart.innerHTML += `
+    <div class="hbar-row">
+      <div class="hbar-label">${e.label}</div>
+      <div class="hbar-wrap">
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%; background: ${extraColors[i] || '#ffaa00'};"></div>
+        </div>
+      </div>
+      <div class="hbar-val">${e.avg_views.toLocaleString('nl-NL')}</div>
+    </div>`;
+});
+</script>
+</body>
+</html>

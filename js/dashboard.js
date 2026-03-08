@@ -26,6 +26,11 @@ const creators = [
     image: "images/yassin.jpeg",
     page: "ana/yassin_analytics.html"
   },
+  {
+    name: "Tonigain",
+    iamge: "images/tonigain.jpg",
+    page: "ana/tonigain_analytics.html"
+  },
 
   // ── Voeg hier extra creators toe ──
   // {
